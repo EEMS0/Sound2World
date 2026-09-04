@@ -2,6 +2,8 @@
 
 Load a song and explore a procedural 3D world that responds to its rhythm, energy, and musical structure.
 
+**Live demo:** https://eems0.github.io/Sound2World/
+
 ## Start the app
 
 Do not open `index.html` directly. Modern browsers protect local JavaScript modules, so use the launcher included with the app:
