@@ -1,5 +1,5 @@
-import { AudioEngine, formatTime } from './audio-engine.js';
-import { WorldEngine } from './world-engine.js';
+import { AudioEngine, formatTime } from './audio-engine.js?v=0.4.0';
+import { WorldEngine } from './world-engine.js?v=0.4.0';
 
 const byId = (id) => document.getElementById(id);
 const ui = {
@@ -9,12 +9,14 @@ const ui = {
   analysisWrap: byId('analysisWrap'), analysisLabel: byId('analysisLabel'), analysisPercent: byId('analysisPercent'), analysisProgress: byId('analysisProgress'),
   status: byId('engineStatus'), section: byId('sectionName'), bpm: byId('bpmBadge'), timeline: byId('timeline'), durationLabel: byId('durationLabel'), directorCopy: byId('directorCopy'),
   play: byId('playButton'), seek: byId('seek'), current: byId('currentTime'), total: byId('totalTime'), volume: byId('volume'),
-  camera: byId('cameraButton'), theme: byId('themeButton'), fullscreen: byId('fullscreenButton'), modeHint: byId('modeHint'),
+  camera: byId('cameraButton'), theme: byId('themeButton'), immersive: byId('immersiveButton'), fullscreen: byId('fullscreenButton'), modeHint: byId('modeHint'),
   sensitivity: byId('sensitivity'), sensitivityValue: byId('sensitivityValue'), dnaButton: byId('dnaButton'), dna: byId('dna'),
-  toast: byId('toast'), fatal: byId('fatalError'),
+  toast: byId('toast'), fatal: byId('fatalError'), spectrum: byId('spectrumCanvas'), texture: byId('textureName'),
+  pulseFlash: byId('pulseFlash'), sectionTransition: byId('sectionTransition'),
   meters: {
     bass: [byId('bassBar'), byId('bassValue')], mid: [byId('midBar'), byId('midValue')],
-    high: [byId('highBar'), byId('highValue')], energy: [byId('energyBar'), byId('energyValue')]
+    high: [byId('highBar'), byId('highValue')], beatStrength: [byId('pulseBar'), byId('pulseValue')],
+    energy: [byId('energyBar'), byId('energyValue')]
   }
 };
 
@@ -35,6 +37,7 @@ let toastTimer = 0;
 let activeSection = 'DREAMING';
 let isScrubbing = false;
 let lastFrame = performance.now();
+let lastSpectrumDraw = 0;
 
 function setEngineStatus(label, mode = 'idle') {
   ui.status.dataset.mode = mode;
@@ -94,7 +97,7 @@ async function loadFile(file) {
     ui.empty.hidden = true;
     ui.loaded.hidden = false;
     ui.trackName.textContent = info.name;
-    ui.trackDetails.textContent = `${info.typeLabel} · ${formatTime(info.duration)} · analysed locally`;
+    ui.trackDetails.textContent = `${info.typeLabel} · ${formatTime(info.duration)}${info.bpm ? ` · ${info.bpm} BPM` : ''} · local analysis`;
     ui.total.textContent = formatTime(info.duration);
     ui.play.disabled = false;
     ui.play.querySelector('span').textContent = '▶';
@@ -181,7 +184,15 @@ ui.camera.addEventListener('click', () => {
 });
 ui.theme.addEventListener('click', () => {
   const theme = world?.cycleTheme();
-  if (theme) ui.theme.querySelector('span').textContent = theme.name;
+  if (theme) {
+    ui.theme.querySelector('span').textContent = theme.name;
+    ui.dna.textContent = world.dna;
+  }
+});
+ui.immersive.addEventListener('click', () => {
+  const hidden = document.body.classList.toggle('hud-hidden');
+  ui.immersive.querySelector('span').textContent = hidden ? 'Show UI' : 'Immersive';
+  ui.immersive.title = hidden ? 'Show interface' : 'Hide interface';
 });
 ui.dnaButton.addEventListener('click', () => {
   const dna = world?.regenerate();
@@ -200,8 +211,45 @@ function demoFeatures(now) {
     mid: .12 + Math.sin(now * .47 + 1) * .035,
     high: .1 + Math.sin(now * 1.35 + 2) * .03,
     energy: .13 + pulse * .12,
+    transient: pulse * .65,
+    beatStrength: pulse * .72,
+    centroid: .46 + Math.sin(now * .16) * .08,
+    warmth: .62,
     kick: pulse > .25 ? 1 : 0
   };
+}
+
+function textureName(features) {
+  if (features.energy < .16) return 'WEIGHTLESS';
+  if (features.transient > .62) return 'PERCUSSIVE';
+  if (features.centroid > .64) return 'AIRY';
+  if (features.warmth > .64) return 'WARM';
+  if (features.energy > .7) return 'DENSE';
+  return 'LUMINOUS';
+}
+
+function drawSpectrum(values, features) {
+  const context = ui.spectrum.getContext('2d');
+  const width = ui.spectrum.width, height = ui.spectrum.height;
+  context.clearRect(0, 0, width, height);
+  const gradient = context.createLinearGradient(0, 0, width, 0);
+  gradient.addColorStop(0, 'rgba(133, 125, 255, .72)');
+  gradient.addColorStop(.52, 'rgba(105, 255, 210, .95)');
+  gradient.addColorStop(1, 'rgba(255, 184, 228, .72)');
+  context.fillStyle = gradient;
+  const gap = 3, barWidth = Math.max(2, width / values.length - gap);
+  values.forEach((value, index) => {
+    const eased = Math.pow(Math.max(.02, value), .72);
+    const barHeight = Math.max(2, eased * (height - 8));
+    const x = index * (width / values.length);
+    context.globalAlpha = .35 + eased * .65;
+    context.beginPath();
+    context.roundRect(x, (height - barHeight) / 2, barWidth, barHeight, barWidth / 2);
+    context.fill();
+  });
+  context.globalAlpha = .18 + features.energy * .2;
+  context.fillRect(0, height / 2, width, 1);
+  context.globalAlpha = 1;
 }
 
 function directorMessage(section) {
@@ -229,6 +277,10 @@ function animate(nowMs) {
     ui.section.textContent = section;
     ui.directorCopy.textContent = directorMessage(section);
     document.body.dataset.section = section.toLowerCase();
+    ui.sectionTransition.textContent = section;
+    ui.sectionTransition.classList.remove('visible');
+    void ui.sectionTransition.offsetWidth;
+    ui.sectionTransition.classList.add('visible');
   }
   for (const [name, [bar, value]] of Object.entries(ui.meters)) {
     const amount = Math.max(0, Math.min(1, features[name]));
@@ -240,6 +292,19 @@ function animate(nowMs) {
     ui.current.textContent = formatTime(audioEngine.currentTime);
   }
   if (audioEngine.loaded) markActiveSegment(audioEngine.currentTime);
+  ui.texture.textContent = textureName(features);
+  document.documentElement.style.setProperty('--music-energy', Math.min(1, features.energy).toFixed(3));
+  document.documentElement.style.setProperty('--music-pulse', Math.min(1, features.beatStrength || 0).toFixed(3));
+  if (features.kick) {
+    ui.pulseFlash.classList.remove('active');
+    void ui.pulseFlash.offsetWidth;
+    ui.pulseFlash.classList.add('active');
+  }
+  if (nowMs - lastSpectrumDraw > 32) {
+    const spectrum = audioEngine.loaded ? audioEngine.getSpectrum(42) : Array.from({ length: 42 }, (_, index) => .06 + Math.max(0, Math.sin(now * 1.7 + index * .42)) * .1);
+    drawSpectrum(spectrum, features);
+    lastSpectrumDraw = nowMs;
+  }
   world?.update(dt, now, features, section);
   requestAnimationFrame(animate);
 }

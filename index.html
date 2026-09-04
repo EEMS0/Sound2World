@@ -4,9 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#07100f" />
-  <title>Sound2World v0.3</title>
+  <title>Sound2World v0.4</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./src/styles.css" />
+  <link rel="stylesheet" href="./src/styles.css?v=0.4.0" />
   <script type="importmap">
     {
       "imports": {
@@ -18,12 +18,14 @@
 </head>
 <body>
   <main id="world" aria-label="Reactive 3D music world"></main>
+  <div class="visual-fx" aria-hidden="true"><i class="vignette"></i><i class="grain"></i><i id="pulseFlash" class="pulse-flash"></i></div>
+  <div id="sectionTransition" class="section-transition" aria-hidden="true">DREAMING</div>
 
   <header class="topbar glass">
     <div class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></div>
     <div class="brand-copy">
       <strong>Sound2World</strong>
-      <span>Audio-reactive world engine · v0.3</span>
+      <span>Musical world engine · v0.4</span>
     </div>
     <div id="engineStatus" class="status-pill"><i></i><span>Dreaming</span></div>
   </header>
@@ -32,7 +34,7 @@
     <section class="glass card upload-card" id="dropZone">
       <div class="card-label">Sound source</div>
       <div id="emptyTrack" class="empty-track">
-        <div class="upload-glyph" aria-hidden="true">♫</div>
+        <div class="upload-glyph" aria-hidden="true"><i></i><i></i><i></i></div>
         <h1>Turn sound into a place.</h1>
         <p>Choose an MP3, WAV, M4A, AAC, OGG or FLAC file. Your music stays on this device.</p>
         <label class="button primary upload-button" for="fileInput">Choose audio</label>
@@ -66,14 +68,17 @@
 
   <aside class="right-rail glass card">
     <div class="card-label">Live signal</div>
+    <canvas id="spectrumCanvas" class="spectrum-canvas" width="384" height="76" aria-hidden="true"></canvas>
     <div class="meter"><span>Bass</span><div><i id="bassBar"></i></div><b id="bassValue">0</b></div>
     <div class="meter"><span>Mids</span><div><i id="midBar"></i></div><b id="midValue">0</b></div>
     <div class="meter"><span>Highs</span><div><i id="highBar"></i></div><b id="highValue">0</b></div>
+    <div class="meter pulse"><span>Pulse</span><div><i id="pulseBar"></i></div><b id="pulseValue">0</b></div>
     <div class="meter energy"><span>Energy</span><div><i id="energyBar"></i></div><b id="energyValue">0</b></div>
+    <div class="texture-readout"><span>Musical texture</span><b id="textureName">DREAMLIKE</b></div>
     <div class="divider"></div>
     <label class="slider-row" for="sensitivity"><span>Reactivity</span><b id="sensitivityValue">100%</b></label>
     <input id="sensitivity" type="range" min="50" max="180" value="100" />
-    <div class="world-dna"><span>World DNA</span><button id="dnaButton" title="Generate a new world"><b id="dna">SW3:MOSS-0000</b><i>↻</i></button></div>
+    <div class="world-dna"><span>World DNA</span><button id="dnaButton" title="Generate a new world"><b id="dna">SW4:MOSS-0000</b><i>↻</i></button></div>
   </aside>
 
   <div class="mode-hint" id="modeHint">DRAG TO LOOK · WASD TO EXPLORE · SHIFT TO SPRINT</div>
@@ -86,6 +91,7 @@
     <div class="transport-divider"></div>
     <button id="cameraButton" class="control-button" title="Toggle camera mode">◉ <span>Cinematic</span></button>
     <button id="themeButton" class="control-button" title="Change biome">◈ <span>Moss</span></button>
+    <button id="immersiveButton" class="control-button" title="Hide interface">◇ <span>Immersive</span></button>
     <label class="volume" title="Volume">⌁ <input id="volume" type="range" min="0" max="100" value="85" aria-label="Volume" /></label>
     <button id="fullscreenButton" class="control-button compact" title="Fullscreen">⛶</button>
   </nav>
@@ -98,6 +104,6 @@
 
   <input id="fileInput" class="visually-hidden" type="file" accept=".mp3,.wav,.m4a,.aac,.ogg,.oga,.flac,audio/*" />
   <audio id="audio"></audio>
-  <script type="module" src="./src/main.js"></script>
+  <script type="module" src="./src/main.js?v=0.4.0"></script>
 </body>
 </html>

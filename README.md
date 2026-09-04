@@ -1,4 +1,4 @@
-# Sound2World v0.3
+# Sound2World v0.4
 
 Load a song and explore a procedural 3D world that responds to its rhythm, energy, and musical structure.
 
@@ -28,13 +28,14 @@ Audio never leaves the device. Sound2World reads it locally, estimates its tempo
 - Theme: cycle Moss, Aurora and Ember biomes
 - World DNA: generate a new deterministic environment
 - Reactivity: increase or reduce how strongly the world responds
+- Immersive: fade the interface away so the world can fill the screen
 
-## What changed in v0.3
+## What changed in v0.4
 
-- Rebuilt file upload with a native file label, global drag-and-drop, validation, progress, errors and reliable replacement/removal.
-- Bundled Three.js locally instead of relying on a CDN.
-- Added offline track analysis, estimated BPM and a generated musical-section timeline.
-- Added an adaptive beat detector, shockwaves, crystals, stronger drop transformations and section-aware fog/lighting.
-- Finished the cinematic camera mode and improved terrain-following exploration.
-- Added three biomes, regenerating World DNA, volume, reactivity and fullscreen controls.
-- Redesigned the interface for clearer loading, playback and director feedback.
+- Added song-adaptive frequency normalization so quiet, loud, warm and bright tracks produce balanced movement.
+- Rebuilt onset and beat detection with spectral flux, dynamic thresholds and smoother attack/release response.
+- Improved offline tempo estimation and section choreography for more convincing builds, drops and breakdowns.
+- Added an animated aurora sky, soft moon, living grass, layered trees, atmospheric mist and luminous terrain paths.
+- Added a central World Heart with orbital rings, vortex particles, beat pulses and expanding shockwaves.
+- Added a live spectrum, pulse meter, musical-texture readout, cinematic section titles and an immersive interface mode.
+- Refined bloom, colour, fog, camera motion and vegetation response to feel musical without constant visual twitching.
