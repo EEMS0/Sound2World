@@ -246,12 +246,15 @@ export class WorldEngine {
         transparent: true,
         opacity: 0,
         side: THREE.DoubleSide,
+        depthTest: false,
         depthWrite: false,
         blending: THREE.AdditiveBlending
       });
       const ring = new THREE.Mesh(new THREE.RingGeometry(.94, 1, 96), material);
       ring.rotation.x = -Math.PI / 2;
       ring.position.y = .72;
+      // Energy pulses are a luminous overlay: terrain must never erase one side.
+      ring.renderOrder = 8;
       ring.visible = false;
       this.scene.add(ring);
       this.shockwaves.push({ ring, age: 99, power: 1 });
@@ -283,7 +286,7 @@ export class WorldEngine {
     this.makeWorldHeart();
     this.makeFireflies();
     this.makeMist();
-    for (const wave of this.shockwaves) wave.ring.position.y = this.heightAt(0, 0) + .13;
+    for (const wave of this.shockwaves) wave.ring.position.y = this.heightAt(0, 0) + .24;
     this.applyTheme();
     return this.dna;
   }

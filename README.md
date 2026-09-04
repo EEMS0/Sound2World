@@ -1,4 +1,4 @@
-# Sound2World v0.4
+# Sound2World v0.4.1
 
 Load a song and explore a procedural 3D world that responds to its rhythm, energy, and musical structure.
 
@@ -30,8 +30,9 @@ Audio never leaves the device. Sound2World reads it locally, estimates its tempo
 - Reactivity: increase or reduce how strongly the world responds
 - Immersive: fade the interface away so the world can fill the screen
 
-## What changed in v0.4
+## What changed in v0.4.1
 
+- Fixed expanding ground pulses so uneven terrain can no longer clip away one side of the ring.
 - Added song-adaptive frequency normalization so quiet, loud, warm and bright tracks produce balanced movement.
 - Rebuilt onset and beat detection with spectral flux, dynamic thresholds and smoother attack/release response.
 - Improved offline tempo estimation and section choreography for more convincing builds, drops and breakdowns.

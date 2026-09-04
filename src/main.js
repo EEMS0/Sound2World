@@ -1,5 +1,5 @@
-import { AudioEngine, formatTime } from './audio-engine.js?v=0.4.0';
-import { WorldEngine } from './world-engine.js?v=0.4.0';
+import { AudioEngine, formatTime } from './audio-engine.js?v=0.4.1';
+import { WorldEngine } from './world-engine.js?v=0.4.1';
 
 const byId = (id) => document.getElementById(id);
 const ui = {
