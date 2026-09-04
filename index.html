@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#07100f" />
+  <title>Sound2World v0.3</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./src/styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three/three.module.js",
+        "three/addons/": "./vendor/three/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <main id="world" aria-label="Reactive 3D music world"></main>
+
+  <header class="topbar glass">
+    <div class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></div>
+    <div class="brand-copy">
+      <strong>Sound2World</strong>
+      <span>Audio-reactive world engine · v0.3</span>
+    </div>
+    <div id="engineStatus" class="status-pill"><i></i><span>Dreaming</span></div>
+  </header>
+
+  <aside class="left-rail">
+    <section class="glass card upload-card" id="dropZone">
+      <div class="card-label">Sound source</div>
+      <div id="emptyTrack" class="empty-track">
+        <div class="upload-glyph" aria-hidden="true">♫</div>
+        <h1>Turn sound into a place.</h1>
+        <p>Choose an MP3, WAV, M4A, AAC, OGG or FLAC file. Your music stays on this device.</p>
+        <label class="button primary upload-button" for="fileInput">Choose audio</label>
+        <span>or drop it anywhere</span>
+      </div>
+      <div id="loadedTrack" class="loaded-track" hidden>
+        <div class="artwork"><div class="mini-spectrum"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="track-meta">
+          <strong id="trackName">Untitled world</strong>
+          <span id="trackDetails">Preparing audio…</span>
+        </div>
+        <button id="clearTrack" class="icon-button" title="Remove audio" aria-label="Remove audio">×</button>
+      </div>
+      <div id="analysisWrap" class="analysis-wrap" hidden>
+        <div class="analysis-copy"><span id="analysisLabel">Analysing structure</span><b id="analysisPercent">0%</b></div>
+        <div class="progress"><i id="analysisProgress"></i></div>
+      </div>
+      <p id="fileError" class="file-error" role="alert" hidden></p>
+    </section>
+
+    <section class="glass card director-card">
+      <div class="card-heading">
+        <div><div class="card-label">World director</div><strong id="sectionName">DREAMING</strong></div>
+        <span id="bpmBadge" class="bpm">— BPM</span>
+      </div>
+      <div id="timeline" class="timeline" aria-label="Detected music sections"><i class="timeline-placeholder"></i></div>
+      <div class="timeline-labels"><span>0:00</span><span id="durationLabel">No track</span></div>
+      <p id="directorCopy">The world is breathing on its own. Add music to generate a custom journey.</p>
+    </section>
+  </aside>
+
+  <aside class="right-rail glass card">
+    <div class="card-label">Live signal</div>
+    <div class="meter"><span>Bass</span><div><i id="bassBar"></i></div><b id="bassValue">0</b></div>
+    <div class="meter"><span>Mids</span><div><i id="midBar"></i></div><b id="midValue">0</b></div>
+    <div class="meter"><span>Highs</span><div><i id="highBar"></i></div><b id="highValue">0</b></div>
+    <div class="meter energy"><span>Energy</span><div><i id="energyBar"></i></div><b id="energyValue">0</b></div>
+    <div class="divider"></div>
+    <label class="slider-row" for="sensitivity"><span>Reactivity</span><b id="sensitivityValue">100%</b></label>
+    <input id="sensitivity" type="range" min="50" max="180" value="100" />
+    <div class="world-dna"><span>World DNA</span><button id="dnaButton" title="Generate a new world"><b id="dna">SW3:MOSS-0000</b><i>↻</i></button></div>
+  </aside>
+
+  <div class="mode-hint" id="modeHint">DRAG TO LOOK · WASD TO EXPLORE · SHIFT TO SPRINT</div>
+
+  <nav class="transport glass" aria-label="Audio and world controls">
+    <button id="playButton" class="play-button" aria-label="Play"><span>▶</span></button>
+    <span id="currentTime" class="time">0:00</span>
+    <input id="seek" class="seek" type="range" min="0" max="1000" value="0" aria-label="Track position" />
+    <span id="totalTime" class="time">0:00</span>
+    <div class="transport-divider"></div>
+    <button id="cameraButton" class="control-button" title="Toggle camera mode">◉ <span>Cinematic</span></button>
+    <button id="themeButton" class="control-button" title="Change biome">◈ <span>Moss</span></button>
+    <label class="volume" title="Volume">⌁ <input id="volume" type="range" min="0" max="100" value="85" aria-label="Volume" /></label>
+    <button id="fullscreenButton" class="control-button compact" title="Fullscreen">⛶</button>
+  </nav>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <div id="fatalError" class="fatal-error" hidden>
+    <strong>This browser could not start the 3D world.</strong>
+    <span>Try a current version of Chrome, Edge, Firefox or Safari with hardware acceleration enabled.</span>
+  </div>
+
+  <input id="fileInput" class="visually-hidden" type="file" accept=".mp3,.wav,.m4a,.aac,.ogg,.oga,.flac,audio/*" />
+  <audio id="audio"></audio>
+  <script type="module" src="./src/main.js"></script>
+</body>
+</html>

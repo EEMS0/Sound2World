@@ -1,0 +1,8 @@
+# Local verification artifacts
+test-tone.wav
+
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
