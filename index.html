@@ -1,109 +1,341 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#07100f" />
-  <title>Sound2World v0.4.1</title>
-  <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
-  <link rel="stylesheet" href="./src/styles.css?v=0.4.1" />
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "./vendor/three/three.module.js",
-        "three/addons/": "./vendor/three/addons/"
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#071218" />
+    <meta
+      name="description"
+      content="Give your music a place to live. Explore worlds that breathe with every song, privately on your device."
+    />
+    <title>Sound2World — Turn music into places</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./src/styles.css?v=1.0.0" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./vendor/three/three.module.js",
+          "three/addons/": "./vendor/three/addons/"
+        }
       }
-    }
-  </script>
-</head>
-<body>
-  <main id="world" aria-label="Reactive 3D music world"></main>
-  <div class="visual-fx" aria-hidden="true"><i class="vignette"></i><i class="grain"></i><i id="pulseFlash" class="pulse-flash"></i></div>
-  <div id="sectionTransition" class="section-transition" aria-hidden="true">DREAMING</div>
-
-  <header class="topbar glass">
-    <div class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></div>
-    <div class="brand-copy">
-      <strong>Sound2World</strong>
-      <span>Musical world engine · v0.4.1</span>
-    </div>
-    <div id="engineStatus" class="status-pill"><i></i><span>Dreaming</span></div>
-  </header>
-
-  <aside class="left-rail">
-    <section class="glass card upload-card" id="dropZone">
-      <div class="card-label">Sound source</div>
-      <div id="emptyTrack" class="empty-track">
-        <div class="upload-glyph" aria-hidden="true"><i></i><i></i><i></i></div>
-        <h1>Turn sound into a place.</h1>
-        <p>Choose an MP3, WAV, M4A, AAC, OGG or FLAC file. Your music stays on this device.</p>
-        <label class="button primary upload-button" for="fileInput">Choose audio</label>
-        <span>or drop it anywhere</span>
+    </script>
+  </head>
+  <body data-screen="landing">
+    <main
+      id="world"
+      aria-label="A living 3D world with a luminous World Heart"
+    ></main>
+    <div class="vignette" aria-hidden="true"></div>
+    <div id="dimensionVeil" class="dimension-veil" aria-hidden="true"></div>
+    <header class="topbar">
+      <button id="homeButton" class="brand" aria-label="Sound2World home">
+        <span class="brand-mark" aria-hidden="true">◈</span
+        ><span>SOUND2WORLD<small>LET THE SOUND TAKE YOU SOMEWHERE</small></span>
+      </button>
+      <div class="top-actions">
+        <span id="engineStatus" class="status"
+          ><i></i><span>A world is waiting</span></span
+        ><button
+          id="settingsButton"
+          class="subtle world-only"
+          aria-expanded="false"
+          aria-controls="settingsPanel"
+        >
+          Tune world ☷</button
+        ><button
+          id="fullscreenButton"
+          class="icon"
+          title="Fullscreen"
+          aria-label="Fullscreen"
+        >
+          ⛶
+        </button>
       </div>
-      <div id="loadedTrack" class="loaded-track" hidden>
-        <div class="artwork"><div class="mini-spectrum"><i></i><i></i><i></i><i></i><i></i></div></div>
-        <div class="track-meta">
-          <strong id="trackName">Untitled world</strong>
-          <span id="trackDetails">Preparing audio…</span>
+    </header>
+    <section
+      id="landingScreen"
+      class="landing screen"
+      aria-labelledby="landingTitle"
+    >
+      <div class="landing-copy">
+        <p class="eyebrow">AN EXPLORABLE MUSIC EXPERIENCE</p>
+        <h1 id="landingTitle">Your music.<br />A world <em>within.</em></h1>
+        <p class="intro">
+          Drop a song. Wake a living world.<br />Follow its heartbeat somewhere
+          new.
+        </p>
+        <div class="landing-actions">
+          <button id="chooseButton" class="primary">
+            Choose a track <span aria-hidden="true">↗</span></button
+          ><button id="demoButton" class="secondary">▶ Try demo track</button>
         </div>
-        <button id="clearTrack" class="icon-button" title="Remove audio" aria-label="Remove audio">×</button>
+        <p class="privacy">MP3, WAV & more · Your music stays on your device</p>
+        <div class="landing-links">
+          <button id="exploreDemo" class="text-button">
+            Explore without music →</button
+          ><button id="howButton" class="text-button">How it works</button>
+        </div>
       </div>
-      <div id="analysisWrap" class="analysis-wrap" hidden>
-        <div class="analysis-copy"><span id="analysisLabel">Analysing structure</span><b id="analysisPercent">0%</b></div>
-        <div class="progress"><i id="analysisProgress"></i></div>
+      <div class="landing-caption">
+        <span class="tiny-orbit" aria-hidden="true"></span>
+        <div>
+          <span class="eyebrow">AT THE CENTRE OF EVERY WORLD</span
+          ><strong>A heart that listens.</strong>
+          <p>One song. Infinite places.</p>
+        </div>
       </div>
-      <p id="fileError" class="file-error" role="alert" hidden></p>
+      <footer class="landing-footer">
+        <span>REAL-TIME 3D · MADE OF MUSIC</span
+        ><span>01 / THE WORLD HEART</span>
+      </footer>
     </section>
-
-    <section class="glass card director-card">
-      <div class="card-heading">
-        <div><div class="card-label">World director</div><strong id="sectionName">DREAMING</strong></div>
-        <span id="bpmBadge" class="bpm">— BPM</span>
+    <section
+      id="analysisScreen"
+      class="process-screen screen"
+      hidden
+      aria-live="polite"
+    >
+      <div class="creation-orbit" aria-hidden="true">◈</div>
+      <p class="eyebrow">SOUND BECOMES PLACE</p>
+      <h2>Growing your world.</h2>
+      <p id="analysisTrack"></p>
+      <div class="analysis-progress"><i id="analysisProgress"></i></div>
+      <div class="analysis-line">
+        <span id="analysisLabel">Reading waveform</span
+        ><span id="analysisPercent">0%</span>
       </div>
-      <div id="timeline" class="timeline" aria-label="Detected music sections"><i class="timeline-placeholder"></i></div>
-      <div class="timeline-labels"><span>0:00</span><span id="durationLabel">No track</span></div>
-      <p id="directorCopy">The world is breathing on its own. Add music to generate a custom journey.</p>
+      <ol id="analysisStages">
+        <li>Read the sound</li>
+        <li>Find its rhythm</li>
+        <li>Shape the journey</li>
+        <li>Wake the Heart</li>
+      </ol>
+      <button id="cancelAnalysis" class="text-button">Cancel</button>
     </section>
-  </aside>
-
-  <aside class="right-rail glass card">
-    <div class="card-label">Live signal</div>
-    <canvas id="spectrumCanvas" class="spectrum-canvas" width="384" height="76" aria-hidden="true"></canvas>
-    <div class="meter"><span>Bass</span><div><i id="bassBar"></i></div><b id="bassValue">0</b></div>
-    <div class="meter"><span>Mids</span><div><i id="midBar"></i></div><b id="midValue">0</b></div>
-    <div class="meter"><span>Highs</span><div><i id="highBar"></i></div><b id="highValue">0</b></div>
-    <div class="meter pulse"><span>Pulse</span><div><i id="pulseBar"></i></div><b id="pulseValue">0</b></div>
-    <div class="meter energy"><span>Energy</span><div><i id="energyBar"></i></div><b id="energyValue">0</b></div>
-    <div class="texture-readout"><span>Musical texture</span><b id="textureName">DREAMLIKE</b></div>
-    <div class="divider"></div>
-    <label class="slider-row" for="sensitivity"><span>Reactivity</span><b id="sensitivityValue">100%</b></label>
-    <input id="sensitivity" type="range" min="50" max="180" value="100" />
-    <div class="world-dna"><span>World DNA</span><button id="dnaButton" title="Generate a new world"><b id="dna">SW4:MOSS-0000</b><i>↻</i></button></div>
-  </aside>
-
-  <div class="mode-hint" id="modeHint">DRAG TO LOOK · WASD TO EXPLORE · SHIFT TO SPRINT</div>
-
-  <nav class="transport glass" aria-label="Audio and world controls">
-    <button id="playButton" class="play-button" aria-label="Play"><span>▶</span></button>
-    <span id="currentTime" class="time">0:00</span>
-    <input id="seek" class="seek" type="range" min="0" max="1000" value="0" aria-label="Track position" />
-    <span id="totalTime" class="time">0:00</span>
-    <div class="transport-divider"></div>
-    <button id="cameraButton" class="control-button" title="Toggle camera mode">◉ <span>Cinematic</span></button>
-    <button id="themeButton" class="control-button" title="Change biome">◈ <span>Moss</span></button>
-    <button id="immersiveButton" class="control-button" title="Hide interface">◇ <span>Immersive</span></button>
-    <label class="volume" title="Volume">⌁ <input id="volume" type="range" min="0" max="100" value="85" aria-label="Volume" /></label>
-    <button id="fullscreenButton" class="control-button compact" title="Fullscreen">⛶</button>
-  </nav>
-
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
-  <div id="fatalError" class="fatal-error" hidden>
-    <strong>This browser could not start the 3D world.</strong>
-    <span>Try a current version of Chrome, Edge, Firefox or Safari with hardware acceleration enabled.</span>
-  </div>
-
-  <input id="fileInput" class="visually-hidden" type="file" accept=".mp3,.wav,.m4a,.aac,.ogg,.oga,.flac,audio/*" />
-  <audio id="audio"></audio>
-  <script type="module" src="./src/main.js?v=0.4.1"></script>
-</body>
+    <section id="revealScreen" class="reveal-screen screen" hidden>
+      <p class="eyebrow">YOUR WORLD IS READY</p>
+      <h2 id="worldName">Luminous Sanctuary</h2>
+      <p id="revealDescription">A forest that breathes with your music.</p>
+      <span id="revealDNA" class="dna-tag"></span
+      ><button id="enterButton" class="primary">
+        Enter your world <span aria-hidden="true">→</span>
+      </button>
+      <p class="privacy">Headphones on. Take your time.</p>
+    </section>
+    <section class="world-label world-only" aria-label="Current world">
+      <p class="eyebrow" id="themeName">MOSSVALE</p>
+      <h2 id="hudWorldName">Luminous Sanctuary</h2>
+      <button id="copyDNA" class="text-button mono" title="Copy World DNA">
+        <span id="dna"></span> ⧉
+      </button>
+    </section>
+    <div
+      id="sectionTransition"
+      class="section-transition"
+      aria-hidden="true"
+    ></div>
+    <div class="heart-caption world-only">
+      <i></i> WORLD HEART <span id="textureName">BREATHING</span>
+    </div>
+    <div class="world-tools world-only">
+      <button id="cameraButton" class="secondary" title="Switch camera (C)">
+        ◉ <span>Cinematic</span></button
+      ><button
+        id="returnHeart"
+        class="subtle"
+        title="Return to the World Heart"
+      >
+        ◎ Return to Heart</button
+      ><button id="immersiveButton" class="subtle" title="Hide controls (H)">
+        ◇ Immersive</button
+      ><button
+        id="snapshotButton"
+        class="subtle"
+        title="Save a world snapshot"
+        aria-label="Save a world snapshot"
+      >
+        ▣
+      </button>
+    </div>
+    <div id="modeHint" class="mode-hint world-only">
+      CINEMATIC JOURNEY · PRESS C TO EXPLORE
+    </div>
+    <nav class="transport world-only" aria-label="Music player">
+      <div class="track-row">
+        <div class="track-art" aria-hidden="true">≋</div>
+        <div class="track-meta">
+          <strong id="trackName">The world is dreaming</strong
+          ><span id="trackDetails">Add a track to wake its Heart</span>
+        </div>
+        <span id="sectionName" class="section-pill">DREAMING</span
+        ><span id="bpmBadge" class="bpm">— BPM</span
+        ><button id="replaceButton" class="subtle" title="Choose another track">
+          ＋ <span>New track</span>
+        </button>
+      </div>
+      <div class="playback-row">
+        <button
+          id="restartButton"
+          class="icon"
+          aria-label="Restart track"
+          title="Restart track"
+        >
+          ↺</button
+        ><button id="playButton" class="play-button" aria-label="Play">
+          ▶</button
+        ><span id="currentTime" class="time">0:00</span>
+        <div class="seek-wrap">
+          <div id="timeline" class="timeline" aria-hidden="true"></div>
+          <input
+            id="seek"
+            type="range"
+            min="0"
+            max="1000"
+            value="0"
+            aria-label="Track position"
+            disabled
+          />
+        </div>
+        <span id="totalTime" class="time">0:00</span
+        ><button id="muteButton" class="icon" aria-label="Mute" title="Mute">
+          ♫</button
+        ><input
+          id="volume"
+          class="volume"
+          type="range"
+          min="0"
+          max="100"
+          value="75"
+          aria-label="Volume"
+        />
+      </div>
+    </nav>
+    <aside
+      id="settingsPanel"
+      class="settings-panel"
+      hidden
+      aria-label="Tune your world"
+    >
+      <div class="panel-heading">
+        <div>
+          <p class="eyebrow">MAKE IT YOURS</p>
+          <h2>Tune your world</h2>
+        </div>
+        <button id="closeSettings" class="icon" aria-label="Close settings">
+          ×
+        </button>
+      </div>
+      <div class="settings-scroll">
+        <section>
+          <h3>Choose a dimension</h3>
+          <div id="themeOptions" class="theme-options"></div>
+          <p id="themeDescription" class="help"></p>
+        </section>
+        <section>
+          <div class="label-row">
+            <h3>World DNA</h3>
+            <button id="regenerateButton" class="text-button">
+              ↻ Regenerate
+            </button>
+          </div>
+          <div class="dna-input">
+            <input
+              id="dnaInput"
+              aria-label="World DNA"
+              spellcheck="false"
+              maxlength="30"
+            /><button id="loadDNA" class="subtle">Load</button>
+          </div>
+          <p class="help">Copy a DNA to return to the same place.</p>
+        </section>
+        <section>
+          <h3>Feeling</h3>
+          <div id="presetOptions" class="preset-options"></div>
+          <div id="reactionControls" class="reaction-controls"></div>
+        </section>
+        <section>
+          <h3>Camera & comfort</h3>
+          <label class="switch-row"
+            >Gentle motion <input id="gentleMotion" type="checkbox"
+          /></label>
+          <p class="help">
+            Explore: drag to look, WASD to move, Shift to sprint. C switches
+            camera. H hides the interface.
+          </p>
+        </section>
+        <section>
+          <h3>Performance</h3>
+          <label class="label-row" for="quality"
+            >Render quality<select id="quality">
+              <option>AUTO</option>
+              <option>LOW</option>
+              <option>MEDIUM</option>
+              <option>HIGH</option>
+            </select></label
+          >
+          <p id="qualityReadout" class="help">
+            Automatically adapts to your device.
+          </p>
+          <label class="switch-row"
+            >Show live diagnostics <input id="debugToggle" type="checkbox"
+          /></label>
+        </section>
+        <section class="signal-section">
+          <h3>Live signal</h3>
+          <canvas
+            id="spectrumCanvas"
+            width="320"
+            height="60"
+            aria-label="Audio spectrum"
+          ></canvas>
+        </section>
+      </div>
+    </aside>
+    <div id="debugOverlay" hidden></div>
+    <div id="dropOverlay" class="drop-overlay" hidden>
+      <div>
+        <span>↓</span>
+        <h2>Let it become a world.</h2>
+        <p>Drop your audio anywhere</p>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <dialog id="howDialog">
+      <button id="closeHow" class="icon" aria-label="Close">×</button>
+      <p class="eyebrow">SOUND → WORLD</p>
+      <h2>Give your music<br />somewhere to live.</h2>
+      <ol>
+        <li>
+          <strong>Bring a song.</strong> Choose a file or try our original demo.
+        </li>
+        <li>
+          <strong>Watch it take shape.</strong> Rhythm and energy become a
+          journey.
+        </li>
+        <li>
+          <strong>Follow the Heart.</strong> Watch cinematically, or explore and
+          make it yours.
+        </li>
+      </ol>
+      <p class="help">
+        Analysis is an artistic interpretation of rhythm and energy. Files are
+        processed privately in your browser.
+      </p>
+    </dialog>
+    <div id="fatalError" class="fatal-error" hidden role="alert">
+      <h2>The world needs a moment.</h2>
+      <p>
+        The 3D connection could not start or was interrupted. Reload the page,
+        or try a browser with hardware acceleration enabled.
+      </p>
+      <button onclick="location.reload()" class="primary">Try again</button>
+    </div>
+    <input
+      id="fileInput"
+      class="visually-hidden"
+      type="file"
+      accept=".mp3,.wav,.m4a,.aac,.ogg,.oga,.flac,.webm,audio/*"
+    /><audio id="audio" preload="metadata"></audio>
+    <script type="module" src="./src/main.js?v=1.0.0"></script>
+  </body>
 </html>

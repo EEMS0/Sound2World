@@ -1,0 +1,10 @@
+{
+  "name": "sound2world",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Explorable music worlds, rendered privately in your browser.",
+  "scripts": {
+    "test": "node tests/core.test.mjs"
+  }
+}
